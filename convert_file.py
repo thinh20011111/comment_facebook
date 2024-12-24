@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import argparse
 
 def csv_to_json(csv_file, json_file):
     # Kiểm tra xem file JSON đã tồn tại hay chưa, nếu có thì xóa
@@ -10,19 +11,27 @@ def csv_to_json(csv_file, json_file):
     # Đọc file CSV
     with open(csv_file, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)  # Sử dụng DictReader để đọc với header làm key
-        urls = []
+        data = []
 
-        # Đọc từng dòng trong file CSV và chỉ lấy dữ liệu từ cột A (cột đầu tiên)
+        # Đọc từng dòng trong file CSV và lưu vào danh sách
         for row in reader:
-            url = row[list(row.keys())[0]]  # Lấy giá trị từ cột đầu tiên
-            urls.append(url)  # Thêm URL vào danh sách
-
-    # Định dạng dữ liệu theo yêu cầu
-    output = {"urls": urls}
+            data.append(row)  # Thêm mỗi dòng dưới dạng một dictionary vào danh sách
 
     # Ghi dữ liệu vào file JSON
     with open(json_file, mode='w', encoding='utf-8') as jsonf:
-        json.dump(output, jsonf, indent=4, ensure_ascii=False)
+        json.dump(data, jsonf, indent=4, ensure_ascii=False)
 
-# Ví dụ sử dụng hàm
-csv_to_json('data_page.csv', 'account.json')
+def main():
+    # Tạo đối tượng parser để nhận tham số từ dòng lệnh
+    parser = argparse.ArgumentParser(description="Chuyển đổi file CSV sang JSON")
+    parser.add_argument('csv_file', help='Đường dẫn tới file CSV gốc')
+    parser.add_argument('json_file', help='Đường dẫn tới file JSON đích')
+
+    # Phân tích tham số dòng lệnh
+    args = parser.parse_args()
+
+    # Gọi hàm để chuyển đổi file
+    csv_to_json(args.csv_file, args.json_file)
+
+if __name__ == "__main__":
+    main()
