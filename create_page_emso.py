@@ -8,21 +8,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-import logging
 import json
 import chardet
-
-logging.basicConfig(
-    filename='error.log',
-    level=logging.DEBUG,  # Ghi lại tất cả thông tin debug, info, warning, error, critical
-    format='%(asctime)s - %(levelname)s - %(message)s',  # Cấu trúc mặc định
-    datefmt='%d/%m/%Y %H:%M:%S',  # Định dạng ngày tháng giờ theo kiểu Việt Nam
-    encoding='utf-8'  # Đảm bảo rằng file log được ghi với encoding UTF-8
-)
+import logging
+from logger_config import setup_logger
 
 def main():
     # Load cấu hình
     config = Config()
+    setup_logger()
 
     # Khởi tạo Service với đường dẫn ChromeDriver
     service = Service(config.CHROME_DRIVER_PATH)
@@ -32,10 +26,17 @@ def main():
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     # Đọc tệp JSON chứa danh sách tài khoản và bình luận
-    accounts_filename = "data/accounts_emso.json"
     facebook_accounts_filename = "data/accounts.json"
     pages_filename = "data/pages.json"
+    accounts_filename = "data/accounts_emso.json"
+    pages_crawl_filename = "data/data_page.json"
 
+    with open(accounts_filename, 'r') as file:
+        accounts_data = json.load(file)
+    
+    with open(pages_crawl_filename, 'r') as file:
+        pages_crawl_data = json.load(file)
+    
     def load_json_file(filename):
         # Tự động phát hiện encoding và mở tệp
         with open(filename, 'rb') as file:
@@ -48,14 +49,13 @@ def main():
             return json.load(file)
 
     try:
-        accounts_data = load_json_file(accounts_filename)
         facebook_data = load_json_file(facebook_accounts_filename)  # Dữ liệu tài khoản Facebook
         pages_data = load_json_file(pages_filename)
-        
-        accounts = accounts_data  # Dữ liệu tài khoản lấy từ accounts_emso.json
+
         facebook_accounts = facebook_data.get("accounts", [])  # Tài khoản Facebook lấy từ file
         pages = pages_data.get("pages", [])  # Các trang cần tạo
-
+        pages_crawl = pages_crawl_data
+        
         if not facebook_accounts:
             logging.error(f"Không có tài khoản Facebook nào trong danh sách!")
             return
@@ -64,40 +64,76 @@ def main():
 
         # Lấy tài khoản đầu tiên từ file Facebook
         first_facebook_account = facebook_accounts[0]
-        print(f"first: {first_facebook_account}")
         
         email = first_facebook_account.get("email")
-        print(f"email: {email}")
         password = first_facebook_account.get("password")
-        print(f"password: {password}")
 
         if not email or not password:
             logging.error(f"Tài khoản Facebook đầu tiên thiếu thông tin: {first_facebook_account}")
             return
 
-        try:
-            # Đăng nhập vào Facebook với tài khoản đầu tiên
-            driver.get(config.FACEBOOK_URL)
-            base_page.login_facebook(email, password)
+       
+        # try:
+        #     # Đăng nhập vào Facebook với tài khoản đầu tiên
+        #     # driver.get(config.FACEBOOK_URL)
+        #     # base_page.login_facebook(email, password)
 
-            for page_url in pages:
-                # Lặp qua các tài khoản EMSo nếu gặp lỗi tạo trang
-                for account in accounts:
-                    emso_email = account.get("username")
-                    emso_password = account.get("password")
+        #     # for page_url in pages:
+        #     #     try:
+        #     #         # Lấy thông tin trang Facebook
+        #     #         page_info = base_page.get_facebook_page_info(page_url)
+        #     #         if page_info:
+        #     #             logging.info(f"Thông tin trang: {page_info}")
+        #     #         else:
+        #     #             logging.warning(f"Không thể lấy thông tin trang: {page_url}")
+        #     #     except Exception as page_error:
+        #     #         logging.error(f"Lỗi khi xử lý trang {page_url}: {page_error}")
+        #     #         continue  # Chuyển sang trang tiếp theo nếu lỗi
+            
+        #     # print(pages_crawl)
+            
+                        
+        # except Exception as e:
+        #     logging.error(f"Lỗi đăng nhập Facebook với tài khoản {email}: {e}")
+        #     return  # Nếu lỗi đăng nhập, dừng lại không thử các tài khoản khác
+     
+        
+        for account_key, account_data in accounts_data.items():
+            try:
+                print(f"\nĐang xử lý tài khoản: {account_key}")
+                email = account_data["username"]  # Đảm bảo 'username' tồn tại trong dictionary
+                password = account_data["password"]  # Đảm bảo 'password' tồn tại trong dictionary
 
-                    try:
-                        base_page.create_page_from_facebook(emso_email, emso_password, page_url)
-                        break
+                # Đăng nhập vào tài khoản hiện tại
+                driver.get(config.EMSO_URL)
+                base_page.login_emso(email, password)
 
-                    except Exception as e:
-                        logging.error(f"Lỗi xảy ra trên trang {page_url} với tài khoản EMSo {emso_email}: {e}")
-                        base_page.logout_emso()
-                        # Nếu lỗi xảy ra khi tạo trang, chuyển sang tài khoản khác
+                # Xử lý tất cả các trang trong pages_crawl_data
+                for page_key, pages_crawl in pages_crawl_data.items():
+                    page_name = pages_crawl["page_name"]
+                    page_username = pages_crawl["username"]
+                    banner = pages_crawl["banner_img_path"]
+                    avatar = pages_crawl["avatar_img_path"]
+                    print(f"Đang tạo trang: {page_name}, {page_username}")
 
-        except Exception as e:
-            logging.error(f"Lỗi đăng nhập Facebook với tài khoản {email}: {e}")
-            return  # Nếu lỗi đăng nhập, dừng lại không thử các tài khoản khác
+                    # Tạo trang
+                    driver.get(config.EMSO_CREATE_PAGE_URL)
+                    success = base_page.create_page(page_name, page_username, avatar, banner)
+                    print(success)
+                    if success:
+                        base_page.save_to_csv(page_username, email, password)  # Lưu vào CSV
+                        print(f"Tạo thành công trang: {page_name} ({page_username})")
+                    else:
+                        # Nếu không thành công, ghi nhận lỗi và chuyển sang tài khoản tiếp theo
+                        print(f"Lỗi khi tạo trang: {page_name}. Chuyển sang tài khoản tiếp theo.")
+                        break  # Thoát khỏi vòng lặp xử lý trang và chuyển sang tài khoản tiếp theo
+
+                # In thông báo khi hoàn thành xử lý tài khoản
+                print(f"Hoàn thành xử lý cho tài khoản: {email}")
+                base_page.logout_emso()  # Đăng xuất khi hoàn thành
+            except Exception as account_error:
+                logging.error(f"Lỗi khi xử lý tài khoản {account_key}: {account_error}")
+                continue  # Tiếp tục với tài khoản tiếp theo
 
     finally:
         driver.quit()

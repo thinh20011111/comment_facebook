@@ -35,27 +35,36 @@ class BasePage:
     VIEW_DETAIL_POST = "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[4]/div[2]/div/div[2]/div[3]/div[{index}]/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[4]/div/div/div/div/div[1]/div/div[2]/div[2]/span"
     SEND_COMMENT = "(//div[@aria-label='Bình luận'])[{index}]"
     BUTTON_SHOW_COMMENT = "(//div[contains(@class, 'x9f619')]/div[contains(@class, 'x1n2onr6')]/span/span[text()='Bình luận'])[{index}]"
-    INFOR = "//div[@aria-label='Trang cá nhân của bạn' and contains(@class, 'x1i10hfl') and @role='button']"
-    LOG_OUT = "//span[contains(@class, 'x193iq5w') and text()='Đăng xuất']"
+    INFOR = "//div[@class='jss48 MuiBox-root css-fstzj5']//i[contains(@class, 'fa-solid fa-angle-down')]"
+    LOG_OUT = "//p[normalize-space(text())='Đăng xuất']"
     COMMENT_IN_DETAIL = "(//div[@contenteditable='true' and @role='textbox'])[4]"
     
-    INPUT_PAGE_NAME = "//textarea[@id='title' and @name='title' and @placeholder='Thông tin về trang']"
-    INPUT_PAGE_PURPOSE = "//input[@name='page_purpose' and @type='text' and @id='mui-66']"
-    OPTION_PAGE_PURPOSE = "//p[contains(text(),'Trang nội dung')]"
-    INPUT_TYPE_PAGE = "//input[@name='page_type' and @type='text' and @id='mui-68']"
-    OPTION_TYPE_PAGE = "//p[contains(text(),'Cá nhân')]"
-    INPUT_PAGE_CATEGORY = "//input[@name='page_category_ids' and @type='text' and @id='mui-70']"
-    OPTION_PAGE_CATEGORY = "//div[@id='mui-70-option-0']//div[1]"
-    PAGE_DESCRIPTION = "//textarea[@id='description' and @name='description' and @placeholder='Thêm mô tả ngắn' and @rows='4']"
+    PAGE_CREATE_PAGE_TITLE_INPUT = "//textarea[@name='title']"
+    PAGE_CREATE_PAGE_PURPOSE_DROPDOWN = "//input[@name='page_purpose']"
+    PAGE_CREATE_PAGE_TYPE_DROPDOWN = "//input[@name='page_type']"
+    PAGE_CREATE_PAGE_CATEGORY_DROPDOWN = "//input[@name='page_category_ids']"
+    PAGE_CREATE_PAGE_DESCRIPTION_TEXTAREA = "//textarea[@name='description']"
+    PAGE_CREATE_PAGE_CREATE_BUTTON = "//button[./div[text()='Tạo trang']]"
+    PAGE_CREATE_PAGE_PURPOSE_OPTION = "//p[text()='{purpose}']"
+    PAGE_CREATE_PAGE_TYPE_PERSONEL_OPTION = "//p[text()='Cá nhân']"
+    PAGE_CREATE_PAGE_TYPE_COMPANY_OPTION = "//p[text()='Doanh nghiệp']"
+    PAGE_CREATE_PAGE_CATEGORY_LANSCAPE_OPTION = "//div[text()='Trang web giải trí']"
+    PAGE_CREATE_CLOSE_BUTTON = "//*[name()='svg' and @data-testid='ClearIcon']"
     AVATAR = "//input[@type='file' and @name='avatar' and @accept='image/jpeg,image/png,image/jpg']"
     BANNER = "//input[@type='file' and @name='banner' and @accept='image/jpeg,image/png,image/jpg']"
     CREATE_PAGE = "//button[@id='demo-customized-button' and contains(., 'Tạo trang')]"
     TOAST = "//div[@class='MuiAlert-message css-1w0ym84']"
     OPEN_FORM_USERNAME = "//a[contains(text(), 'Tạo @')]"
-    INPUT_USERNAME_PAGE = "//textarea[contains(@class, 'MuiInputBase-input') and @placeholder='Tên người dùng']"
+    INPUT_USERNAME_PAGE = "//textarea[@id='username' and @name='username' and @placeholder='Tên người dùng']"
     UPDATE_USERNAME_BUTTON = "//div[@class='MuiBox-root css-80hrfn' and text()='Cập nhật']"
     LOGOUT_BTN = "//header//div[@role= 'button' and ./div/p[text()='Đăng xuất']]"
     AVATAR_FACEBOOK = "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[1]/div[2]/div/div/div/div[1]/div"
+    BANNER_FACEBOOK = "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[1]/div[1]/div/div/div/div[2]/div/a/div[1]/div/div/div/img"
+    AVATAR_FACEBOOK_DOWLOAD = "//img[@class='x1bwycvy x193iq5w x4fas0m x19kjcj4' and @data-visualcompletion='media-vc-image']"
+    PAGES_LEFT_MENU = "//main/div/div[1]/div[2]/div[1]/nav/a[7]"
+    VIEW_AVATAR_OPTION = "//a[contains(@class, 'x1i10hfl') and contains(., 'Xem ảnh đại diện')]"
+    CONFIRM_LOGOUT = "//button//div[normalize-space(text())='Rời khỏi']"
+    CONFIRM_CREATE = "//button[.//div[normalize-space(text())='Xong']]"
     
     def find_element(self, locator_type, locator_value):
         return self.driver.find_element(locator_type, locator_value)
@@ -66,9 +75,7 @@ class BasePage:
         self.click_element(self.LOGIN_BUTTON) 
         time.sleep(5)
     
-    def login_emso(self, username, password):
-        self.driver.get(self.config.EMSO_URL)
-        time.sleep(1)
+    def login_emso(self, username = str, password = str):
         self.input_text(self.LOGIN_EMAIL_INPUT, username)
         self.input_text(self.LOGIN_PWD_INPUT, password)
         self.click_element(self.LOGIN_SUBMIT_BTN)
@@ -77,10 +84,16 @@ class BasePage:
     def logout_emso(self):
         self.click_element(self.PROFILE_ACCOUNT_ICON)
         self.click_element(self.LOGOUT_BTN)
+        self.driver.get(self.config.EMSO_URL)
     
     def logout(self):
         self.click_element(self.INFOR)
         self.click_element(self.LOG_OUT)
+    
+    def logout_when_create_page(self):
+        self.click_element(self.INFOR)
+        self.click_element(self.LOG_OUT)
+        self.click_element(self.CONFIRM_LOGOUT)
         
     def is_element_present_by_xpath(self, xpath: str) -> bool:
         try:
@@ -91,6 +104,22 @@ class BasePage:
             # Nếu không tìm thấy phần tử, trả về False
             return False
     
+    def verify_text_from_element(self, element_locator, expected_text):
+        try:
+            # Lấy văn bản của phần tử
+            actual_text = self.get_text_from_element(element_locator)
+
+            # Kiểm tra xem văn bản có khớp với giá trị mong muốn không
+            if actual_text.strip() == expected_text.strip():
+                logging.info(f"Văn bản khớp: '{actual_text}'")
+                return True
+            else:
+                logging.error(f"Văn bản không khớp. Mong đợi: '{expected_text}', Thực tế: '{actual_text}'")
+                return False
+        except Exception as e:
+            logging.error(f"Lỗi khi kiểm tra văn bản từ phần tử {element_locator}: {e}")
+            return False  # Trả về False nếu có lỗi    
+
     def click_element(self, xpath: str, timeout=15):
         try:
             element = self.wait_for_element_clickable(xpath, timeout)
@@ -298,35 +327,74 @@ class BasePage:
         except Exception as e:
             print(f"Error uploading image: {e}")
     
-    def create_page_emso(self, page_name, page_description, banner, avatar, page_username):
-        try:
-            self.input_text(self.INPUT_PAGE_NAME, page_name)
-            self.click_element(self.INPUT_PAGE_PURPOSE)
-            self.click_element(self.OPTION_PAGE_PURPOSE)
-            self.click_element(self.INPUT_TYPE_PAGE)
-            self.click_element(self.OPTION_TYPE_PAGE)
-            self.click_element(self.INPUT_PAGE_CATEGORY)
-            self.click_element(self.OPTION_PAGE_CATEGORY)
-            self.input_text(self.PAGE_DESCRIPTION, page_description)
-            self.upload_image(self.AVATAR, avatar)
-            self.upload_image(self.BANNER, banner)
-            self.click_element(self.CREATE_PAGE)
-            
-            # Kiểm tra nếu phần tử thông báo lỗi (TOAST) xuất hiện
-            toast = self.find_element("//div[@class='MuiAlert-message css-1w0ym84']")
-            if toast:
-                # Nếu có thông báo lỗi, ghi lại lỗi và có thể ném exception
-                logging.error(f"Lỗi khi tạo trang: {toast.text}")
-                raise Exception(f"Lỗi khi tạo trang: {toast.text}")
-            
+    def create_page(self, pagename, page_username, avatar, banner):
+        # Điền tên trang
+        self.input_text(self.PAGE_CREATE_PAGE_TITLE_INPUT, pagename)
+        # Chọn mục "Trang nội dung"
+        self.click_element(self.PAGE_CREATE_PAGE_PURPOSE_DROPDOWN)
+        self.click_element(self.PAGE_CREATE_PAGE_PURPOSE_OPTION.replace('{purpose}', "Trang nội dung"))
+        # Chọn loại trang
+        self.click_element(self.PAGE_CREATE_PAGE_TYPE_DROPDOWN)
+        self.click_element(self.PAGE_CREATE_PAGE_TYPE_PERSONEL_OPTION)
+        # Chọn danh mục
+        self.click_element(self.PAGE_CREATE_PAGE_CATEGORY_DROPDOWN)
+        self.input_text(self.PAGE_CREATE_PAGE_CATEGORY_DROPDOWN, "Trang web giải trí")
+        
+        time.sleep(2)
+        # Chọn mục "Trang web giải trí"
+        self.click_element(self.PAGE_CREATE_PAGE_CATEGORY_LANSCAPE_OPTION)
+        # Điền mô tả trang
+        self.input_text(self.PAGE_CREATE_PAGE_DESCRIPTION_TEXTAREA, "Mô tả trang")
+        # Tải ảnh đại diện và ảnh bìa
+        self.upload_image(self.AVATAR, avatar)
+        self.upload_image(self.BANNER, banner)
+        # Nhấn nút tạo trang
+        time.sleep(3)
+        self.click_element(self.PAGE_CREATE_PAGE_CREATE_BUTTON)
+
+        time.sleep(2)
+        if self.is_element_present_by_xpath(self.TOAST):
+            toast = self.find_element_by_locator(self.TOAST)
+            logging.error(f"Lỗi khi tạo trang {pagename}: {toast.text}")
+            return False  # Trả về False nếu có lỗi
+        else:
+            # Cập nhật username của trang
             self.click_element(self.OPEN_FORM_USERNAME)
-            self.input_text(self.INPUT_USERNAME, page_username)
-            self.click_outside_input(self.INPUT_USERNAME)
+            self.input_text(self.INPUT_USERNAME_PAGE, page_username)
+            self.click_outside_input(self.INPUT_USERNAME_PAGE)
             self.click_element(self.UPDATE_USERNAME_BUTTON)
-        except Exception as e:
-            logging.error(f"Đã xảy ra lỗi khi tạo trang: {e}")
-            raise  # Ném lại lỗi nếu cần thiết để xử lý tiếp
-    
+            self.click_element(self.CONFIRM_CREATE)
+            logging.info(f"Đã tạo trang thành công: {pagename}")
+            return True  # Trả về True nếu tạo trang thành công
+
+    def save_to_csv(self, page_username, username, password):
+        # Đường dẫn tới file CSV
+        file_path = "data/pageES.csv"
+        facebook_url = f"https://www.facebook.com/{page_username}"
+        emso_url = f"https://{self.config.EVN}-fe.emso.vn/page/{page_username}"
+
+        # Kiểm tra và tạo file nếu chưa tồn tại
+        file_exists = os.path.exists(file_path)
+        
+        # Mở file CSV để lưu kết quả
+        with open(file_path, 'a', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['Facebook URL', 'EMSO URL', 'Username', 'Password']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            # Ghi header nếu file chưa tồn tại
+            if not file_exists:
+                writer.writeheader()
+
+            # Ghi thông tin vào CSV
+            writer.writerow({
+                'Facebook URL': facebook_url,
+                'EMSO URL': emso_url,
+                'Username': username,
+                'Password': password
+            })
+
+        logging.info(f"Đã lưu thông tin trang {page_username} vào file CSV tại {file_path}.")
+
     def download_image(self, url, filename):
         try:
             # Đảm bảo thư mục media tồn tại
@@ -363,65 +431,57 @@ class BasePage:
             username = page_url.split('/')[-1]  # Username ở cuối URL
 
             # Tải ảnh banner
-            banner_img_tag = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[1]/div[1]/div/div/div/div[2]/div/a/div[1]/div/div/div/img")
-            if banner_img_tag:
-                banner_url = banner_img_tag.get_attribute('src')
-                if banner_url:
-                    self.download_image(banner_url, 'banner.jpg')
+            banner_img_path = None
+            banner_img_tag = self.driver.find_element(By.XPATH, self.BANNER_FACEBOOK)
+            banner_url = banner_img_tag.get_attribute('src') if banner_img_tag else None
+            if banner_url:
+                banner_img_path = f"{username}_banner.jpg"
+                self.download_image(banner_url, banner_img_path)
 
             # Tải ảnh avatar
-            # Click vào phần tử avatar Facebook
+            avatar_img_path = None
             self.click_element(self.AVATAR_FACEBOOK)
-            
-            # Đợi phần tử hình ảnh tải xong (10 giây tối đa)
+
+            time.sleep(1)
+            if self.is_element_present_by_xpath(self.VIEW_AVATAR_OPTION):
+                self.click_element(self.VIEW_AVATAR_OPTION)
             avatar_img_tag = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, "//img[@class='x1bwycvy x193iq5w x4fas0m x19kjcj4' and @data-visualcompletion='media-vc-image']"))
+                EC.presence_of_element_located((By.XPATH, self.AVATAR_FACEBOOK_DOWLOAD))
             )
-
-            # Lấy URL ảnh avatar
-            avatar_url = avatar_img_tag.get_attribute('src')
-            
+            avatar_url = avatar_img_tag.get_attribute('src') if avatar_img_tag else None
             if avatar_url:
-                # Tải ảnh xuống thư mục media
-                self.download_image(avatar_url, 'avatar.jpg')
+                avatar_img_path = f"{username}_avatar.jpg"
+                self.download_image(avatar_url, avatar_img_path)
 
-            # Lấy phần giới thiệu (text)
-            description = ''
-            try:
-                description_tag = self.driver.find_element(By.XPATH, "//div[@data-pagelet='ProfileIntroduction']")
-                if description_tag:
-                    description = description_tag.text.strip()
-            except Exception as e:
-                print("No description found.")
-
-            return {
+            # Chuẩn bị dữ liệu để lưu
+            page_info = {
                 'page_name': page_name,
                 'username': username,
-                'description': description
+                'banner_img_path': banner_img_path,
+                'avatar_img_path': avatar_img_path
             }
+
+            # Đường dẫn file JSON
+            json_file_path = "data/data_page.json"
+
+            # Kiểm tra và đọc dữ liệu cũ từ file JSON (nếu có)
+            if os.path.exists(json_file_path):
+                with open(json_file_path, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+            else:
+                data = {}
+
+            # Cập nhật dữ liệu theo `username`
+            data[username] = page_info
+
+            # Ghi lại dữ liệu vào file JSON
+            with open(json_file_path, 'w', encoding='utf-8') as file:
+                json.dump(data, file, ensure_ascii=False, indent=4)
+
+            return page_info
 
         except Exception as e:
             print(f"Error: {e}")
             return None
-
-    def create_page_from_facebook(self, username, password, page_url):
-        """Lấy thông tin trang Facebook và tạo trang emso."""
-        try:
-            # Lấy thông tin trang từ Facebook
-            page_info = self.get_facebook_page_info(page_url)
-            print(f"page: {page_info}")
-            self.driver.get(self.config.EMSO_URL)
-            self.login_emso(username, password)
-            self.driver.get(self.config.EMSO_CREATE_PAGE_URL)
-            # Truyền các thông tin này vào hàm create_page_emso
-            self.create_page_emso(
-                page_name=page_info['username'],
-                page_description=page_info['description'],
-                banner=page_info['banner'],
-                avatar=page_info['avatar'],
-                page_username=page_info['username']
-            )
-            self.logout_emso()
-        except Exception as e:
-            logging.error(f"Không thể tạo trang từ Facebook: {e}")
-            raise
+    
+    

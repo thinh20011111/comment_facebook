@@ -6,3 +6,4 @@ class Config:
     FACEBOOK_URL = "https://www.facebook.com/"
     EMSO_URL = "https://staging-fe.emso.vn/"
     EMSO_CREATE_PAGE_URL = "https://staging-fe.emso.vn/pages/creation"
+    EVN = "lab"

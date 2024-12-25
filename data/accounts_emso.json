@@ -1,14 +1,10 @@
-[
-    {
+{
+    "account_1": {
         "username": "emsomanagerhd@gmail.com",
         "password": "khongnhomatkhaucu"
     },
-    {
-        "username": "testeremso11@gmail.com",
+    "account_2": {
+        "username": "emsotester3@gmail.com",
         "password": "Neko10121311"
-    },
-    {
-        "username": "testeremso12@gmail.com",
-        "password": "khongnhomatkhaucu"
     }
-]
+}

@@ -9,17 +9,13 @@ import logging
 import json
 import chardet  # Dùng để tự động phát hiện encoding tệp
 from itertools import cycle  # Lặp lại danh sách tài khoản
+from logger_config import setup_logger
 
-logging.basicConfig(
-    filename='error.log',
-    level=logging.DEBUG,  # Ghi lại tất cả thông tin debug, info, warning, error, critical
-    format='%(asctime)s - %(levelname)s - %(message)s',  # Cấu trúc mặc định
-    datefmt='%d/%m/%Y %H:%M:%S'  # Định dạng ngày tháng giờ theo kiểu Việt Nam
-)
 
 def main():
     # Load cấu hình
     config = Config()
+    setup_logger()
 
     # Khởi tạo Service với đường dẫn ChromeDriver
     service = Service(config.CHROME_DRIVER_PATH)
