@@ -21,6 +21,7 @@ def main():
     # Khởi tạo Service với đường dẫn ChromeDriver
     service = Service(config.CHROME_DRIVER_PATH)
     chrome_options = Options()
+    # chrome_options.add_argument("--headless")  # Chế độ không giao diện
     chrome_options.add_argument("--disable-notifications")  # Chặn thông báo
     chrome_options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -34,7 +35,7 @@ def main():
     with open(accounts_filename, 'r') as file:
         accounts_data = json.load(file)
     
-    with open(pages_crawl_filename, 'r') as file:
+    with open(pages_crawl_filename, "r", encoding="utf-8") as file:
         pages_crawl_data = json.load(file)
     
     def load_json_file(filename):
@@ -71,33 +72,31 @@ def main():
         if not email or not password:
             logging.error(f"Tài khoản Facebook đầu tiên thiếu thông tin: {first_facebook_account}")
             return
-
        
         # try:
-        #     # Đăng nhập vào Facebook với tài khoản đầu tiên
-        #     # driver.get(config.FACEBOOK_URL)
-        #     # base_page.login_facebook(email, password)
+        #     driver.get(config.FACEBOOK_URL)
+        #     base_page.login_facebook(email, password)
 
-        #     # for page_url in pages:
-        #     #     try:
-        #     #         # Lấy thông tin trang Facebook
-        #     #         page_info = base_page.get_facebook_page_info(page_url)
-        #     #         if page_info:
-        #     #             logging.info(f"Thông tin trang: {page_info}")
-        #     #         else:
-        #     #             logging.warning(f"Không thể lấy thông tin trang: {page_url}")
-        #     #     except Exception as page_error:
-        #     #         logging.error(f"Lỗi khi xử lý trang {page_url}: {page_error}")
-        #     #         continue  # Chuyển sang trang tiếp theo nếu lỗi
+        #     for page_url in pages:
+        #         try:
+        #             # Lấy thông tin trang Facebook
+        #             page_info = base_page.get_facebook_page_info(page_url)
+        #             if page_info:
+        #                 logging.info(f"Thông tin trang: {page_info}")
+        #             else:
+        #                 logging.warning(f"Không thể lấy thông tin trang: {page_url}")
+        #         except Exception as page_error:
+        #             logging.error(f"Lỗi khi xử lý trang {page_url}: {page_error}")
+        #             continue  # Chuyển sang trang tiếp theo nếu lỗi
             
-        #     # print(pages_crawl)
-            
-                        
+        #     print(pages_crawl)
         # except Exception as e:
         #     logging.error(f"Lỗi đăng nhập Facebook với tài khoản {email}: {e}")
         #     return  # Nếu lỗi đăng nhập, dừng lại không thử các tài khoản khác
      
         
+        failed_pages = []
+
         for account_key, account_data in accounts_data.items():
             try:
                 print(f"\nĐang xử lý tài khoản: {account_key}")
@@ -109,7 +108,10 @@ def main():
                 base_page.login_emso(email, password)
 
                 # Xử lý tất cả các trang trong pages_crawl_data
-                for page_key, pages_crawl in pages_crawl_data.items():
+                pages_to_create = failed_pages if failed_pages else pages_crawl_data.items()
+                failed_pages = []  # Đặt lại danh sách lỗi cho tài khoản hiện tại
+
+                for page_key, pages_crawl in pages_to_create:
                     page_name = pages_crawl["page_name"]
                     page_username = pages_crawl["username"]
                     banner = pages_crawl["banner_img_path"]
@@ -124,9 +126,9 @@ def main():
                         base_page.save_to_csv(page_username, email, password)  # Lưu vào CSV
                         print(f"Tạo thành công trang: {page_name} ({page_username})")
                     else:
-                        # Nếu không thành công, ghi nhận lỗi và chuyển sang tài khoản tiếp theo
-                        print(f"Lỗi khi tạo trang: {page_name}. Chuyển sang tài khoản tiếp theo.")
-                        break  # Thoát khỏi vòng lặp xử lý trang và chuyển sang tài khoản tiếp theo
+                        # Nếu không thành công, thêm vào danh sách lỗi
+                        print(f"Lỗi khi tạo trang: {page_name}.")
+                        failed_pages.append((page_key, pages_crawl))
 
                 # In thông báo khi hoàn thành xử lý tài khoản
                 print(f"Hoàn thành xử lý cho tài khoản: {email}")
@@ -134,6 +136,11 @@ def main():
             except Exception as account_error:
                 logging.error(f"Lỗi khi xử lý tài khoản {account_key}: {account_error}")
                 continue  # Tiếp tục với tài khoản tiếp theo
+
+        if failed_pages:
+            print("Các trang chưa được tạo:")
+            for page_key, pages_crawl in failed_pages:
+                print(f"- {pages_crawl['page_name']} ({pages_crawl['username']})")
 
     finally:
         driver.quit()
