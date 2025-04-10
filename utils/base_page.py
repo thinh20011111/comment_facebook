@@ -58,9 +58,9 @@ class BasePage:
     INPUT_USERNAME_PAGE = "//textarea[@id='username' and @name='username' and @placeholder='Tên người dùng']"
     UPDATE_USERNAME_BUTTON = "//div[@class='MuiBox-root css-80hrfn' and text()='Cập nhật']"
     LOGOUT_BTN = "//header//div[@role= 'button' and ./div/p[text()='Đăng xuất']]"
-    AVATAR_FACEBOOK = "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[1]/div[2]/div/div/div/div[1]/div"
-    BANNER_FACEBOOK = "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[1]/div[1]/div/div/div/div[2]/div/a/div[1]/div/div/div/img"
-    AVATAR_FACEBOOK_DOWLOAD = "//img[@class='x1bwycvy x193iq5w x4fas0m x19kjcj4' and @data-visualcompletion='media-vc-image']"
+    AVATAR_FACEBOOK = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[1]/div[2]/div/div/div/div[1]"
+    BANNER_FACEBOOK = "//img[@data-imgperflogname='profileCoverPhoto']"
+    AVATAR_FACEBOOK_DOWLOAD = "/html/body/div[1]/div/div[1]/div/div[5]/div/div/div[3]/div[2]/div/div[2]/div/div[1]/div/div[2]/div/div/div/img"
     PAGES_LEFT_MENU = "//main/div/div[1]/div[2]/div[1]/nav/a[7]"
     VIEW_AVATAR_OPTION = "//a[contains(@class, 'x1i10hfl') and contains(., 'Xem ảnh đại diện')]"
     CONFIRM_LOGOUT = "//button//div[normalize-space(text())='Rời khỏi']"
@@ -362,6 +362,7 @@ class BasePage:
             self.click_element(self.OPEN_FORM_USERNAME)
             self.input_text(self.INPUT_USERNAME_PAGE, page_username)
             self.click_outside_input(self.INPUT_USERNAME_PAGE)
+            time.sleep(1)
             self.click_element(self.UPDATE_USERNAME_BUTTON)
             self.click_element(self.CONFIRM_CREATE)
             logging.info(f"Đã tạo trang thành công: {pagename}")
@@ -401,16 +402,25 @@ class BasePage:
             media_folder = "media"
             if not os.path.exists(media_folder):
                 os.makedirs(media_folder)  # Tạo thư mục nếu chưa tồn tại
-            
+
             # Lấy đường dẫn đầy đủ cho tệp ảnh
             filepath = os.path.join(media_folder, filename)
-            
+
             # Tải ảnh
             response = requests.get(url, stream=True)
             if response.status_code == 200:
-                with open(filepath, 'wb') as f:
-                    for chunk in response.iter_content(1024):
-                        f.write(chunk)
+                image = Image.open(BytesIO(response.content))
+                
+                # Kiểm tra kích thước ảnh
+                if image.width < 450 or image.height < 150:
+                    # Resize ảnh để đạt kích thước tối thiểu
+                    new_width = max(450, image.width)
+                    new_height = max(150, image.height)
+                    image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                    print(f"Image resized to {new_width}x{new_height}")
+
+                # Lưu ảnh vào tệp
+                image.save(filepath)
                 print(f"Downloaded image: {filepath}")
             else:
                 print(f"Failed to download image from {url}")
@@ -442,16 +452,35 @@ class BasePage:
             avatar_img_path = None
             self.click_element(self.AVATAR_FACEBOOK)
 
-            time.sleep(1)
+            time.sleep(2)
+            
             if self.is_element_present_by_xpath(self.VIEW_AVATAR_OPTION):
                 self.click_element(self.VIEW_AVATAR_OPTION)
-            avatar_img_tag = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, self.AVATAR_FACEBOOK_DOWLOAD))
-            )
-            avatar_url = avatar_img_tag.get_attribute('src') if avatar_img_tag else None
-            if avatar_url:
-                avatar_img_path = f"{username}_avatar.jpg"
-                self.download_image(avatar_url, avatar_img_path)
+            else:
+                print("[!] VIEW_AVATAR_OPTION không tồn tại hoặc không hiển thị.")
+
+            try:
+                avatar_img_tag = WebDriverWait(self.driver, 50).until(
+                    EC.presence_of_element_located((By.XPATH, self.AVATAR_FACEBOOK_DOWLOAD))
+                )
+                
+                if avatar_img_tag:
+                    outer_html = avatar_img_tag.get_attribute("outerHTML")
+
+                    avatar_url = avatar_img_tag.get_attribute('src')
+
+                    if avatar_url and avatar_url.startswith("http"):
+                        avatar_img_path = f"{username}_avatar.jpg"
+                        self.download_image(avatar_url, avatar_img_path)
+                    else:
+                        print("[!] Không tìm thấy hoặc URL ảnh không hợp lệ.")
+                else:
+                    print("[!] Không tìm thấy thẻ ảnh avatar.")
+                    
+            except Exception as e:
+                import traceback
+                print("[!] Lỗi khi lấy avatar:")
+                traceback.print_exc()
 
             # Chuẩn bị dữ liệu để lưu
             page_info = {
@@ -484,4 +513,26 @@ class BasePage:
             print(f"Error: {e}")
             return None
     
-    
+    def download_video_from_xpath(self, url, xpath, output_file):
+        try:
+            # Tìm phần tử video qua XPath
+            video_element = self.driver.find_element(By.XPATH, xpath)
+            video_url = video_element.get_attribute("src")
+
+            if not video_url:
+                raise Exception("Không tìm thấy URL video.")
+
+            print(f"Đang tải video từ: {video_url}")
+
+            # Tải video bằng requests
+            response = requests.get(video_url, stream=True)
+            if response.status_code == 200:
+                with open(output_file, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=1024):
+                        f.write(chunk)
+                print(f"Video đã được lưu tại: {output_file}")
+            else:
+                raise Exception(f"Lỗi tải video: HTTP {response.status_code}")
+        except Exception as e:
+            print(f"Lỗi: {e}")
+        
