@@ -1,0 +1,96 @@
+===============================
+📘 README - TỰ ĐỘNG TẠO PAGE EMSO TỪ FACEBOOK
+===============================
+
+Chương trình này có chức năng:
+- Đăng nhập vào tài khoản Facebook để lấy thông tin các trang (Page)
+- Đăng nhập vào hệ thống EMSO để tạo các Page tương ứng
+- Ghi lại các lỗi phát sinh trong quá trình tạo vào file `data/error_page.txt`
+
+Yêu cầu:
+---------
+- Python 3.8 trở lên
+- Chrome & ChromeDriver tương thích (cấu hình trong utils/config.py)
+- Các thư viện: selenium, chardet, json, logging
+
+Cấu trúc thư mục:
+-----------------
+project/
+│
+├── data/
+│   ├── accounts.json           # Danh sách tài khoản Facebook
+│   ├── accounts_emso.json      # Danh sách tài khoản EMSO
+│   ├── pages.json              # Danh sách đường link page Facebook cần lấy thông tin
+│   └── error_page.txt          # (Sinh ra trong quá trình chạy nếu có lỗi)
+│
+├── utils/
+│   ├── base_page.py            # Class BasePage chứa các hàm thao tác trình duyệt
+│   └── config.py               # File cấu hình đường dẫn, URL...
+│
+├── logger_config.py            # Thiết lập hệ thống logging
+├── main.py                     # File chạy chính
+└── README.txt                  # (file này)
+
+-------------------------------
+📄 CẤU TRÚC CÁC FILE ĐẦU VÀO:
+-------------------------------
+
+1. accounts.json (danh sách tài khoản Facebook)
+-----------------------------------------------
+{
+  "accounts": [
+    {
+      "email": "example_facebook@gmail.com",
+      "password": "your_fb_password"
+    }
+  ]
+}
+
+2. accounts_emso.json (danh sách tài khoản EMSO)
+------------------------------------------------
+{
+  "acc1": {
+    "username": "emso_user_1",
+    "password": "password1"
+  },
+  "acc2": {
+    "username": "emso_user_2",
+    "password": "password2"
+  }
+}
+
+3. pages.json (danh sách link Facebook Page)
+--------------------------------------------
+{
+  "pages": [
+    "https://www.facebook.com/example.page1",
+    "https://www.facebook.com/example.page2"
+  ]
+}
+
+--------------------------------
+📤 KẾT QUẢ & GHI NHẬN LỖI:
+--------------------------------
+
+- Nếu một page gặp lỗi khi lấy thông tin hoặc tạo trên EMSO,
+  đường link và lý do lỗi sẽ được lưu tại file `data/error_page.txt`.
+
+📄 Ví dụ nội dung `error_page.txt`:
+-----------------------------------
+https://www.facebook.com/example.page1 | Lỗi tải avatar
+https://www.facebook.com/example.page2 | Lỗi upload avatar/banner
+
+📌 Các lỗi có thể gặp:
+- Lỗi tải avatar
+- Lỗi tải banner
+- Lỗi upload avatar/banner
+- Tạo page thất bại
+- Không lấy được thông tin page
+- Lỗi không xác định: ...
+
+--------------------------------
+📌 CHẠY CHƯƠNG TRÌNH:
+--------------------------------
+
+```bash
+python main.py
