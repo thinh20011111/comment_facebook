@@ -93,4 +93,8 @@ https://www.facebook.com/example.page2 | Lỗi upload avatar/banner
 --------------------------------
 
 ```bash
-python main.py
+python create_page_emso.py
+
+Khi chạy cần đăng nhập vào facebook tránh việc bị lỗi
+
+Chú ý: Nếu muốn chạy ở môi trường lab thì cẩn sửa đổi file ".\comment_facebook\utils\config.py"
