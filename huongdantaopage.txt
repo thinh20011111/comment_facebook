@@ -32,7 +32,7 @@ project/
 └── README.txt                  # (file này)
 
 -------------------------------
-📄 CẤU TRÚC CÁC FILE ĐẦU VÀO:
+📄 CẤU TRÚC CÁC FILE ĐẦU VÀO TRONG THƯ MỤC "data":
 -------------------------------
 
 1. accounts.json (danh sách tài khoản Facebook)
