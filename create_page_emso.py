@@ -34,6 +34,7 @@ def main():
     service = Service(config.CHROME_DRIVER_PATH)
     chrome_options = Options()
     chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument("--incognito")
     chrome_options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
