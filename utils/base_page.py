@@ -65,6 +65,8 @@ class BasePage:
     VIEW_AVATAR_OPTION = "//a[contains(@class, 'x1i10hfl') and contains(., 'Xem ảnh đại diện')]"
     CONFIRM_LOGOUT = "//button//div[normalize-space(text())='Rời khỏi']"
     CONFIRM_CREATE = "//button[.//div[normalize-space(text())='Xong']]"
+    PAGE_NAME = "//span[@class='x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x14qwyeo xw06pyt x579bpy xjkpybl x1xlr1w8 xzsf02u x1yc453h']//h1[@class='html-h1 xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1vvkbs x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz']"
+    
     
     def find_element(self, locator_type, locator_value):
         return self.driver.find_element(locator_type, locator_value)
@@ -328,7 +330,9 @@ class BasePage:
             print(f"Error uploading image: {e}")
     
     def create_page(self, pagename, page_username, avatar, banner):
+        print("pagename= ", pagename)
         # Điền tên trang
+        self.click_element(self.PAGE_CREATE_PAGE_TITLE_INPUT)
         self.input_text(self.PAGE_CREATE_PAGE_TITLE_INPUT, pagename)
         # Chọn mục "Trang nội dung"
         self.click_element(self.PAGE_CREATE_PAGE_PURPOSE_DROPDOWN)
@@ -435,7 +439,7 @@ class BasePage:
             time.sleep(3)  # Đợi trang tải xong
 
             # Lấy tên của trang
-            page_name = self.driver.find_element(By.TAG_NAME, 'h1').text.strip()
+            page_name = self.driver.find_element(By.XPATH, self.PAGE_NAME).text.strip()
 
             # Lấy username từ URL
             username = page_url.split('/')[-1]  # Username ở cuối URL

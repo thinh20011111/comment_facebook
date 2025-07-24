@@ -105,7 +105,7 @@ def main():
 
                         print(f"➡️ Tạo page: {page_name} ({page_username})")
                         driver.get(config.EMSO_CREATE_PAGE_URL)
-
+                        
                         try:
                             success = base_page.create_page(page_name, page_username, avatar, banner)
                         except Exception as upload_err:
