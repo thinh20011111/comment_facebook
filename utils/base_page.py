@@ -340,6 +340,7 @@ class BasePage:
         # Chọn loại trang
         self.click_element(self.PAGE_CREATE_PAGE_TYPE_DROPDOWN)
         self.click_element(self.PAGE_CREATE_PAGE_TYPE_PERSONEL_OPTION)
+
         # Chọn danh mục
         self.click_element(self.PAGE_CREATE_PAGE_CATEGORY_DROPDOWN)
         self.input_text(self.PAGE_CREATE_PAGE_CATEGORY_DROPDOWN, "Trang web giải trí")
