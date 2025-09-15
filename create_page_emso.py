@@ -36,6 +36,13 @@ def main():
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument("--start-maximized")
+
+    # 👉 Thêm các tùy chọn để tránh lỗi GPU
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-software-rasterizer")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
     # Load dữ liệu
@@ -64,7 +71,10 @@ def main():
         print(f"Đăng nhập Facebook: {fb_email}")
         driver.get(config.FACEBOOK_URL)
         base_page.login_facebook(fb_email, fb_password)
-        time.sleep(50)
+        time.sleep(15)
+        driver.back()
+        base_page.login_facebook(fb_email, fb_password)
+        time.sleep(15)
 
         emso_index = 0
 

@@ -29,7 +29,7 @@ class BasePage:
     LOGIN_EMAIL_INPUT = "//input[@id='email' and @type='text']"
     LOGIN_PWD_INPUT = "//input[@id='password' and @type='password']"
     LOGIN_SUBMIT_BTN = "//button[@id='demo-customized-button' and ./div[text()='Đăng nhập']]"
-    PROFILE_ACCOUNT_ICON = "//div[@id='root']/div/div/div/div/header/div/div/div[3]/div/div[2]/div[2]/i"
+    PROFILE_ACCOUNT_ICON = "/html/body/div/div/div[1]/div/header/div/div/div[3]/div/div[2]/div[2]/i"
     INPUT_COMMENT_TEMPLATE = "(//div[@class='xzsf02u x1a2a7pz x1n2onr6 x14wi4xw notranslate' and @contenteditable='true'])[{index}]"
     BUTTON_COMMENT = "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[4]/div[2]/div/div[2]/div[3]/div[{index}]/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[4]/div/div/div[1]/div/div[2]/div/div[2]"
     VIEW_DETAIL_POST = "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[4]/div[2]/div/div[2]/div[3]/div[{index}]/div/div/div/div/div/div/div/div/div/div/div/div[13]/div/div/div[4]/div/div/div/div/div[1]/div/div[2]/div[2]/span"
@@ -65,7 +65,7 @@ class BasePage:
     VIEW_AVATAR_OPTION = "//a[contains(@class, 'x1i10hfl') and contains(., 'Xem ảnh đại diện')]"
     CONFIRM_LOGOUT = "//button//div[normalize-space(text())='Rời khỏi']"
     CONFIRM_CREATE = "//button[.//div[normalize-space(text())='Xong']]"
-    PAGE_NAME = "//span[@class='x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x14qwyeo xw06pyt x579bpy xjkpybl x1xlr1w8 xzsf02u x1yc453h']//h1[@class='html-h1 xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x1vvkbs x1heor9g x1qlqyl8 x1pd3egz x1a2a7pz']"
+    PAGE_NAME = "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/span[1]/h1[1]"
     
     
     def find_element(self, locator_type, locator_value):
@@ -340,7 +340,6 @@ class BasePage:
         # Chọn loại trang
         self.click_element(self.PAGE_CREATE_PAGE_TYPE_DROPDOWN)
         self.click_element(self.PAGE_CREATE_PAGE_TYPE_PERSONEL_OPTION)
-
         # Chọn danh mục
         self.click_element(self.PAGE_CREATE_PAGE_CATEGORY_DROPDOWN)
         self.input_text(self.PAGE_CREATE_PAGE_CATEGORY_DROPDOWN, "Trang web giải trí")
