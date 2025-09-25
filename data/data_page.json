@@ -1,8 +1,56 @@
 {
-    "ditdangcomic": {
-        "page_name": "Dịt Dàng Comic",
-        "username": "ditdangcomic",
-        "banner_img_path": "ditdangcomic_banner.jpg",
-        "avatar_img_path": "ditdangcomic_avatar.jpg"
+    "beatbacgianggg": {
+        "page_name": "BEAT Bắc Giang",
+        "username": "beatbacgianggg",
+        "banner_img_path": "beatbacgianggg_banner.jpg",
+        "avatar_img_path": "beatbacgianggg_avatar.jpg"
+    },
+    "diadiemHN": {
+        "page_name": "Địa Điểm Ăn Chơi Hà Nội",
+        "username": "diadiemHN",
+        "banner_img_path": "diadiemHN_banner.jpg",
+        "avatar_img_path": "diadiemHN_avatar.jpg"
+    },
+    "NinhBinh247": {
+        "page_name": "Ninh Bình",
+        "username": "NinhBinh247",
+        "banner_img_path": "NinhBinh247_banner.jpg",
+        "avatar_img_path": "NinhBinh247_avatar.jpg"
+    },
+    "doisongphapluatonline": {
+        "page_name": "Báo Đời Sống Pháp Luật",
+        "username": "doisongphapluatonline",
+        "banner_img_path": "doisongphapluatonline_banner.jpg",
+        "avatar_img_path": "doisongphapluatonline_avatar.jpg"
+    },
+    "SforumTech": {
+        "page_name": "Sforum.vn - Trang thông tin công nghệ mới nhất",
+        "username": "SforumTech",
+        "banner_img_path": "SforumTech_banner.jpg",
+        "avatar_img_path": "SforumTech_avatar.jpg"
+    },
+    "AnSapTuSon": {
+        "page_name": "Ăn Sập Từ Sơn",
+        "username": "AnSapTuSon",
+        "banner_img_path": "AnSapTuSon_banner.jpg",
+        "avatar_img_path": "AnSapTuSon_avatar.jpg"
+    },
+    "SPX.DanCongSo": {
+        "page_name": "Dân Công Sở",
+        "username": "SPX.DanCongSo",
+        "banner_img_path": "SPX.DanCongSo_banner.jpg",
+        "avatar_img_path": "SPX.DanCongSo_avatar.jpg"
+    },
+    "feedy.vn": {
+        "page_name": "Feedy Việt Nam",
+        "username": "feedy.vn",
+        "banner_img_path": "feedy.vn_banner.jpg",
+        "avatar_img_path": "feedy.vn_avatar.jpg"
+    },
+    "theanh28trendingg": {
+        "page_name": "Theanh28 Trending",
+        "username": "theanh28trendingg",
+        "banner_img_path": "theanh28trendingg_banner.jpg",
+        "avatar_img_path": "theanh28trendingg_avatar.jpg"
     }
 }
